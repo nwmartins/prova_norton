@@ -1,0 +1,35 @@
+----------------------------------Destino----------------------------------
+CREATE TABLE public.Destino
+(
+    cd_destino integer NOT NULL,
+    ds_destino character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    dt_inicio date NOT NULL,
+    dt_termino date NOT NULL,
+	vl_total decimal(15,2) NOT NULL, 
+    CONSTRAINT pk_destino PRIMARY KEY (cd_destino)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+ALTER TABLE public.Destino OWNER to postgres;
+----------------------------------Custo----------------------------------
+CREATE TABLE public.Custo
+(
+	cd_custo integer NOT NULL, 
+    cd_destino integer NOT NULL,
+    ds_custo character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    tp_custo integer NOT NULL,
+    vl_custo decimal(15,2) NOT NULL,
+    CONSTRAINT pk_custo PRIMARY KEY (cd_custo), 
+	CONSTRAINT custo_destino_fk FOREIGN KEY (cd_destino)
+        REFERENCES public.Destino (cd_destino) MATCH SIMPLE
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+ALTER TABLE public.Custo OWNER to postgres;
+--------------------------------------------------------------------
