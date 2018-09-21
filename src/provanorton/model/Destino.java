@@ -1,7 +1,7 @@
 package provanorton.model;
 
-//import java.util.Date;
-import java.sql.Date;
+import java.util.Date;
+//import java.sql.Date;
 
 /**
  * @author Norton Wagner Martins  
@@ -55,5 +55,9 @@ public class Destino {
         this.vlTotal = vlTotal;
     }
 
-    
+    @Override
+    public String toString() {
+        return codigo + " - " + destino ;
+    }
+  
 }

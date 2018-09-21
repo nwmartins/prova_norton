@@ -16,15 +16,15 @@ import provanorton.model.Destino;
  * @date 19/09/2018
  */
 public class CustoDAO implements GenericDAO<Custo>{
-    
     private Connection connection = null;
+    private DestinoDAO destinoDAO;
 
     @Override
     public void save(Custo entity) throws SQLException {
         try {
             this.connection = new ConnectionFactory().getConnection();
             StringBuilder sql = new StringBuilder();
-            sql.append("INSERTO INTO CUSTO(CD_CUSTO, CD_DESTINO, DS_CUSTO,")
+            sql.append("INSERT INTO CUSTO(CD_CUSTO, CD_DESTINO, DS_CUSTO,")
                     .append("TP_CUSTO, VL_CUSTO) VALUES (?,?,?,?,?)");
 
             PreparedStatement pstm = connection.prepareStatement(sql.toString());
@@ -42,7 +42,7 @@ public class CustoDAO implements GenericDAO<Custo>{
             connection.close();
         }
     }
-
+    
     @Override
     public void update(Custo entity) throws SQLException {
         try{
@@ -73,7 +73,7 @@ public class CustoDAO implements GenericDAO<Custo>{
     public void delete(int id) throws SQLException {
         try {
             this.connection = new ConnectionFactory().getConnection();
-            String sql = "DELETE FROM CUSTO WHERE CD_DESTINO = "+id;
+            String sql = "DELETE FROM CUSTO WHERE CD_CUSTO = "+id;
             PreparedStatement pstm = connection.prepareStatement(sql);
             pstm.execute();
             pstm.close();            
@@ -88,6 +88,7 @@ public class CustoDAO implements GenericDAO<Custo>{
     @Override
     public Custo getById(int id) throws SQLException {
         Custo custo = null;
+        DestinoDAO destinoDAO = new DestinoDAO();
         try{
             this.connection = new ConnectionFactory().getConnection();
             String sql = "SELECT * FROM CUSTO WHERE CD_CUSTO = "+id;
@@ -96,7 +97,7 @@ public class CustoDAO implements GenericDAO<Custo>{
             custo = new Custo();
             while (rs.next()) {
                 custo.setCodigo(rs.getInt("CD_CUSTO"));
-                custo.setDestino((Destino) rs.getObject("CD_DESTINO"));
+                custo.setDestino(destinoDAO.getById(rs.getInt("CD_DESTINO")));
                 custo.setDsCusto(rs.getString("DS_CUSTO"));
                 custo.setTpCusto(rs.getInt("TP_CUSTO"));
                 custo.setVlCusto(rs.getDouble("VL_CUSTO"));
@@ -124,7 +125,7 @@ public class CustoDAO implements GenericDAO<Custo>{
             while (rs.next()) {
                 custo = new Custo();
                 custo.setCodigo(rs.getInt("CD_DESTINO"));
-                //custo.setDestino((Destino) rs.getObject("DS_DESTINO"));
+                custo.setDestino(destinoDAO.getById(rs.getInt("CD_DESTINO")));
                 custo.setDsCusto(rs.getString("DS_CUSTO"));
                 custo.setTpCusto(rs.getInt("TP_CUSTO"));
                 custo.setVlCusto(rs.getDouble("VL_CUSTO"));
@@ -142,6 +143,7 @@ public class CustoDAO implements GenericDAO<Custo>{
 
     @Override
     public List<Custo> getAll() throws SQLException {
+        destinoDAO = new DestinoDAO();
         Custo custo = null;
         List<Custo> custoList = null;
         try{
@@ -153,7 +155,7 @@ public class CustoDAO implements GenericDAO<Custo>{
             while (rs.next()) {
                 custo = new Custo();
                 custo.setCodigo(rs.getInt("CD_CUSTO"));
-                //custo.setDestino(rs.getString("DS_DESTINO"));
+                custo.setDestino((destinoDAO.getById(rs.getInt("CD_DESTINO"))));
                 custo.setDsCusto(rs.getString("DS_CUSTO"));
                 custo.setTpCusto(rs.getInt("TP_CUSTO"));
                 custo.setVlCusto(rs.getDouble("VL_CUSTO"));
@@ -167,7 +169,7 @@ public class CustoDAO implements GenericDAO<Custo>{
             this.connection.close();
         }
         return custoList;
-    }
+    } 
 
     @Override
     public int getLastId() throws SQLException {

@@ -5,7 +5,6 @@
  */
 package tela;
 
-import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import provanorton.DAO.DestinoDAO;
 import provanorton.model.Destino;
+import provanorton.util.DateUtil;
 import static provanorton.util.DateUtil.dateToString;
 import static provanorton.util.DateUtil.stringToDate;
 
@@ -47,7 +47,7 @@ public class DestinoJDialog extends javax.swing.JDialog {
     }
 
     private void desabilitaCampos(boolean ativo) {
-        tfDescricao.setEnabled(ativo);
+        tfDestino.setEnabled(ativo);
         tfDtFim.setEnabled(ativo);
         tfDtInicio.setEnabled(ativo);
         tfVlTot.setEnabled(ativo);
@@ -55,10 +55,10 @@ public class DestinoJDialog extends javax.swing.JDialog {
 
     private void limparCampos() {
         tfCodigo.setText("");
-        tfDescricao.setText("");
+        tfDestino.setText("");
         tfDtInicio.setText("");
         tfDtFim.setText("");
-        tfVlTot.setText("");
+        //tfVlTot.setText("");
     }
 
     /**
@@ -74,7 +74,7 @@ public class DestinoJDialog extends javax.swing.JDialog {
         jLabel1 = new javax.swing.JLabel();
         tfCodigo = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        tfDescricao = new javax.swing.JTextField();
+        tfDestino = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbDestinos = new javax.swing.JTable();
         jLabel6 = new javax.swing.JLabel();
@@ -89,23 +89,22 @@ public class DestinoJDialog extends javax.swing.JDialog {
         rbCodigo = new javax.swing.JRadioButton();
         rbDescricao = new javax.swing.JRadioButton();
         jLabel4 = new javax.swing.JLabel();
-        tfCodigoFiltro = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         tfDescicaoFiltro = new javax.swing.JTextField();
         btFiltrar = new javax.swing.JButton();
         btFiltroAll = new javax.swing.JButton();
+        tfCodigoFiltro = new javax.swing.JFormattedTextField();
         jLabel7 = new javax.swing.JLabel();
         tfVlTot = new javax.swing.JTextField();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Cadastro de Destino");
 
         jLabel1.setText("Código:");
 
         tfCodigo.setEnabled(false);
 
-        jLabel2.setText("Descrição:");
+        jLabel2.setText("Destino:");
 
         tbDestinos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -118,9 +117,16 @@ public class DestinoJDialog extends javax.swing.JDialog {
             Class[] types = new Class [] {
                 java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
         jScrollPane1.setViewportView(tbDestinos);
@@ -128,7 +134,7 @@ public class DestinoJDialog extends javax.swing.JDialog {
         jLabel6.setText("Data De Inicio:");
 
         try {
-            tfDtInicio.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("####-##-##")));
+            tfDtInicio.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
@@ -136,7 +142,7 @@ public class DestinoJDialog extends javax.swing.JDialog {
         jLabel3.setText("Data De Termino:");
 
         try {
-            tfDtFim.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("####-##-##")));
+            tfDtFim.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
@@ -206,6 +212,8 @@ public class DestinoJDialog extends javax.swing.JDialog {
             }
         });
 
+        tfCodigoFiltro.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+
         javax.swing.GroupLayout pnFiltrosLayout = new javax.swing.GroupLayout(pnFiltros);
         pnFiltros.setLayout(pnFiltrosLayout);
         pnFiltrosLayout.setHorizontalGroup(
@@ -217,25 +225,27 @@ public class DestinoJDialog extends javax.swing.JDialog {
                 .addComponent(rbDescricao)
                 .addGap(43, 43, 43)
                 .addComponent(jLabel4)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tfCodigoFiltro)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnFiltrosLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btNovo, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(pnFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnFiltrosLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btSalvar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btRemover)
+                        .addGap(164, 164, 164)
+                        .addComponent(btFiltroAll))
                     .addGroup(pnFiltrosLayout.createSequentialGroup()
-                        .addComponent(tfCodigoFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(25, 25, 25)
                         .addComponent(jLabel5)
                         .addGap(18, 18, 18)
                         .addComponent(tfDescicaoFiltro)
                         .addGap(18, 18, 18)
-                        .addComponent(btFiltrar))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnFiltrosLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btNovo, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btSalvar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btRemover)
-                        .addGap(164, 164, 164)
-                        .addComponent(btFiltroAll)))
+                        .addComponent(btFiltrar)))
                 .addContainerGap())
         );
         pnFiltrosLayout.setVerticalGroup(
@@ -249,23 +259,21 @@ public class DestinoJDialog extends javax.swing.JDialog {
                     .addComponent(btFiltroAll))
                 .addGap(18, 18, 18)
                 .addGroup(pnFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tfCodigoFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
                     .addComponent(tfDescicaoFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
                     .addComponent(rbCodigo)
                     .addComponent(rbDescricao)
-                    .addComponent(btFiltrar))
+                    .addComponent(btFiltrar)
+                    .addComponent(tfCodigoFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26))
         );
 
         jLabel7.setText("Valor Total:");
 
+        tfVlTot.setText("CALCULADO A PARTIR DOS CUSTOS");
         tfVlTot.setToolTipText("");
-
-        jLabel8.setText("Ano-Mês-Dia");
-
-        jLabel9.setText("Ano-Mês-Dia");
+        tfVlTot.setEnabled(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -294,7 +302,7 @@ public class DestinoJDialog extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(tfCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(tfDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(tfDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -303,13 +311,9 @@ public class DestinoJDialog extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(tfDtInicio, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(tfDtFim, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel9))
-                        .addGap(96, 96, 96))
+                        .addGap(174, 174, 174))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(tfVlTot, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(tfVlTot, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
@@ -320,15 +324,13 @@ public class DestinoJDialog extends javax.swing.JDialog {
                     .addComponent(jLabel1)
                     .addComponent(tfCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
-                    .addComponent(tfDtInicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8))
+                    .addComponent(tfDtInicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(tfDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
-                    .addComponent(tfDtFim, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9))
+                    .addComponent(tfDtFim, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
@@ -343,33 +345,35 @@ public class DestinoJDialog extends javax.swing.JDialog {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSalvarActionPerformed
-        Destino destino = new Destino();
-        destino.setCodigo(Integer.parseInt(tfCodigo.getText().trim()));
-        destino.setDestino(tfDescricao.getText().trim());
-        destino.setDtInicio(Date.valueOf(tfDtInicio.getText().trim().replaceAll("/", "-")));
-        destino.setDtTermino(Date.valueOf(tfDtFim.getText().trim()));
-        destino.setVlTotal(Double.parseDouble(tfVlTot.getText().replaceAll(",", ".").trim()));
-        try {
-            destinoDAO.save(destino);
-            JOptionPane.showMessageDialog(null, "Destino Salvo Com Sucesso!!!");
-            limparCampos();
-            desabilitaCampos(false);
-            carregaTable(destinoDAO.getAll());
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        if (validaCampos()) {
+            java.sql.Date dataSqlInicio = new java.sql.Date((DateUtil.stringToDate(tfDtInicio.getText().trim())).getTime());
+            java.sql.Date dataSqlTermino = new java.sql.Date((DateUtil.stringToDate(tfDtFim.getText().trim())).getTime());
+            Destino destino = new Destino();
+            destino.setCodigo(Integer.parseInt(tfCodigo.getText().trim()));
+            destino.setDestino(tfDestino.getText().trim());
+            destino.setDtInicio(dataSqlInicio);
+            destino.setDtTermino(dataSqlTermino);
+            destino.setVlTotal(0.00);
+            try {
+                destinoDAO.save(destino);
+                JOptionPane.showMessageDialog(null, "Destino Salvo Com Sucesso!!!");
+                limparCampos();
+                desabilitaCampos(false);
+                carregaTable(destinoDAO.getAll());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
+
     }//GEN-LAST:event_btSalvarActionPerformed
 
     private void btNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btNovoActionPerformed
         try {
             tfCodigo.setText(String.valueOf(destinoDAO.getLastId()));
-            tfDescricao.setText("Teste");
-            tfVlTot.setText("1500");
- 
-            
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -380,20 +384,38 @@ public class DestinoJDialog extends javax.swing.JDialog {
     private void btFiltrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btFiltrarActionPerformed
         try {
             if (rbCodigo.isSelected() && tfCodigoFiltro.getText().trim().length() > 0) {//Codigo está selecionado
-                Destino destino = destinoDAO.getById(Integer.parseInt(tfCodigoFiltro.getText()));
+                Destino destino = destinoDAO.getById(Integer.parseInt(tfCodigoFiltro.getText().trim()));
                 List<Destino> destList = new ArrayList<>();
                 destList.add(destino);
                 carregaTable(destList);
             } else if (rbDescricao.isSelected() && tfDescicaoFiltro.getText().trim().length() > 0) {
                 carregaTable(destinoDAO.getByName(tfDescicaoFiltro.getText()));
-            }else {
+            } else {
                 JOptionPane.showMessageDialog(null, "Favor Informe um filtro para Pesquisa...");
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }//GEN-LAST:event_btFiltrarActionPerformed
 
+    private Boolean validaCampos() {
+        Boolean valido = true;
+        if (tfDestino.getText().trim().length() <= 0) {
+            JOptionPane.showMessageDialog(null, "Campo Destino não pode ficar vazio");
+            tfDestino.setFocusable(true);
+            valido = false;
+        } else if (tfDtInicio.getText().replace("/", " ").trim().length() <= 0) {
+            JOptionPane.showMessageDialog(null, "Campo DATA INICIAL não pode ficar vazio");
+            tfDtInicio.setFocusable(true);
+            valido = false;
+        } else if (tfDtFim.getText().replace("/", "").trim().length() <= 0) {
+            JOptionPane.showMessageDialog(null, "Campo DATA FINAL não pode ficar vazio");
+            tfDtFim.setFocusable(true);
+            valido = false;
+        }
+
+        return valido;
+    }
     private void rbDescricaoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_rbDescricaoItemStateChanged
         tfCodigoFiltro.setText("");
         tfCodigoFiltro.setEnabled(false);
@@ -410,10 +432,13 @@ public class DestinoJDialog extends javax.swing.JDialog {
 
     private void btSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSairActionPerformed
         this.dispose();
+        MenuJDialog dialog = new MenuJDialog(new javax.swing.JFrame(), true);
+        dialog.setVisible(true);
     }//GEN-LAST:event_btSairActionPerformed
 
     private void btFiltroAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btFiltroAllActionPerformed
         try {
+
             carregaTable(destinoDAO.getAll());
             tfCodigoFiltro.setText("");
             tfDescicaoFiltro.setText("");
@@ -422,12 +447,12 @@ public class DestinoJDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_btFiltroAllActionPerformed
 
-    private void habilitaFiltroCodigo(){
+    private void habilitaFiltroCodigo() {
         tfDescicaoFiltro.setText("");
         tfDescicaoFiltro.setEnabled(false);
         tfCodigoFiltro.setEnabled(true);
     }
-    
+
     /**
      * @param args the command line arguments
      */
@@ -486,25 +511,24 @@ public class DestinoJDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel pnFiltros;
     private javax.swing.JRadioButton rbCodigo;
     private javax.swing.JRadioButton rbDescricao;
     private javax.swing.JTable tbDestinos;
     private javax.swing.JTextField tfCodigo;
-    private javax.swing.JTextField tfCodigoFiltro;
+    private javax.swing.JFormattedTextField tfCodigoFiltro;
     private javax.swing.JTextField tfDescicaoFiltro;
-    private javax.swing.JTextField tfDescricao;
+    private javax.swing.JTextField tfDestino;
     private javax.swing.JFormattedTextField tfDtFim;
     private javax.swing.JFormattedTextField tfDtInicio;
     private javax.swing.JTextField tfVlTot;
     // End of variables declaration//GEN-END:variables
 
     private void carregaTable(List<Destino> destinoList) {
-        if (destinoList == null)
+        if (destinoList == null) {
             return;
+        }
         DefaultTableModel model = (DefaultTableModel) tbDestinos.getModel();
         model.setRowCount(0);
         for (Destino d : destinoList) {
@@ -521,10 +545,15 @@ public class DestinoJDialog extends javax.swing.JDialog {
         }
         int codigoRemover = (int) tbDestinos.getValueAt(linhaSeleciona, 0);
         try {
+            if (destinoDAO.getById(codigoRemover).getVlTotal() > 0) {
+                JOptionPane.showMessageDialog(null, "Não é possivel Remover, pois possui um CUSTO vinculado");
+                return;
+            }
             destinoDAO.delete(codigoRemover);
             carregaTable(destinoDAO.getAll());
         } catch (SQLException ex) {
-            ex.printStackTrace();
-        }       
+            ex.getErrorCode();
+            JOptionPane.showMessageDialog(null, ex);
+        }
     }
 }

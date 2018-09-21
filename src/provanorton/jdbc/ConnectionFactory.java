@@ -17,7 +17,7 @@ public class ConnectionFactory {
         try {
             //jdbc do postgres/endereço/ porta/ database
             return DriverManager.getConnection(
-                    "jdbc:postgresql://localhost:5432/viajemdb",
+                    "jdbc:postgresql://localhost:5432/viagemdb",
                     "postgres","postgres");
         } catch (SQLException ex) {
             System.out.println("Erro ao criar uma "

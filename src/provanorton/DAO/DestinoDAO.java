@@ -6,10 +6,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 //import java.util.Date;
 import java.util.List;
 import provanorton.jdbc.ConnectionFactory;
 import provanorton.model.Destino;
+import tela.DestinoJDialog;
 
 /**
  * @author Norton Wagner Martins
@@ -30,8 +32,8 @@ public class DestinoDAO implements GenericDAO<Destino> {
             PreparedStatement pstm = connection.prepareStatement(sql.toString());
             pstm.setInt(1, entity.getCodigo());
             pstm.setString(2, entity.getDestino());
-            pstm.setDate(3, entity.getDtInicio());
-            pstm.setDate(4, entity.getDtTermino());
+            pstm.setDate(3, (Date) entity.getDtInicio());
+            pstm.setDate(4, (Date) entity.getDtTermino());
             pstm.setDouble(5, entity.getVlTotal());
             pstm.execute();
             pstm.close();
@@ -41,27 +43,7 @@ public class DestinoDAO implements GenericDAO<Destino> {
         } finally {
             connection.close();
         }
-        
-        /*try {
-            this.connection = new ConnectionFactory().getConnection();
-            StringBuilder sql = new StringBuilder();
-            sql.append("INSERTO INTO DESTINO(CD_DESTINO, DS_DESTINO, DT_INICIO,")
-                    .append("DT_TERMINO, VL_TOTAL) VALUES (?,?,?,?,?)");
 
-            PreparedStatement pstm = connection.prepareStatement(sql.toString());
-            pstm.setInt(1, entity.getCodigo());
-            pstm.setString(2, entity.getDestino());
-            pstm.setDate(3, entity.getDtInicio());
-            pstm.setDate(4, entity.getDtTermino());
-            pstm.setDouble(5, entity.getVlTotal());
-            pstm.execute();
-            pstm.close();
-        } catch (SQLException ex) {
-            System.out.println("Erro ao inserir um Destino.");
-            ex.printStackTrace();
-        } finally {
-            connection.close();
-        }*/
     }
 
     @Override
@@ -76,8 +58,8 @@ public class DestinoDAO implements GenericDAO<Destino> {
             
             PreparedStatement pstm = connection.prepareStatement(sql.toString());
             pstm.setString(1, entity.getDestino());
-            pstm.setDate(2, entity.getDtInicio());
-            pstm.setDate(3, entity.getDtTermino());
+            pstm.setDate(2, (Date) entity.getDtInicio());
+            pstm.setDate(3, (Date) entity.getDtTermino());
             pstm.setDouble(4, entity.getVlTotal());
             pstm.setInt(5, entity.getCodigo());
             pstm.execute();
